@@ -1,14 +1,15 @@
 pipeline {
     agent {
         docker {
-            image 'node:12' 
+            image 'node:12'
+            args '-v /var/run/docker.sock:/var/run/docker.sock --group-add 999'
+            workingDir '/var/jenkins_home/workspace/NodejsExampleCIPipeline'
         }
     }
     stages {
         stage('Checkout Code') {
             steps {
-                echo "Checking out code..."
-
+                echo 'Checking out code...'
             }
         }
         stage('Install Dependencies') {
@@ -22,18 +23,6 @@ pipeline {
                 echo 'Running tests...'
                 sh 'npm test'
             }
-        }
-
-    }
-    post {
-        success {
-            echo 'CI Pipeline successful! Build and tests passed.'
-        }
-        failure {
-            echo 'CI Pipeline failed. Check console output for errors.'
-        }
-        always {
-            echo 'Pipeline finished.'
         }
     }
 }
